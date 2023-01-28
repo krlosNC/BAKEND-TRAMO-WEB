@@ -6,8 +6,10 @@ import loginRoutes from './routes/login.routes.js'
 // rutas CONDUCTORES
 import conductoresRoutes from './routes/conductores.routes.js'
 
-// rutas SOLICITUDES
-import soliConductoresRoures from './routes/soliConductores.routes.js'
+// rutas SOLICITUDES CONDUCTORES
+import soliConductoresRoutes from './routes/soliConductores.routes.js'
+
+import datosConductores from './routes/datosConductores.routes.js'
 
 const app = express()
 
@@ -27,7 +29,9 @@ app.use(loginRoutes)
 
 app.use('/admin', conductoresRoutes)
 
-app.use('/admin', soliConductoresRoures)
+app.use('/admin', soliConductoresRoutes)
+
+app.use('/admin', datosConductores)
 
 export default app
 

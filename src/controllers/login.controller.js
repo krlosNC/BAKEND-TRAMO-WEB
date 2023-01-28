@@ -3,19 +3,16 @@ import bcryptjs from 'bcryptjs';
 // Invocamos a la conexion de la DB
 import connection from '../db.js';
 
-// Invocamos los errores de http para el servidor
-import createError from 'http-errors'
 
 // CREAR UN NUEVO ADMINISTRADOR TRAMO
 export const createAdmin = async (req, res)=>{
     try {
-        const email =  req.body.email;
-        const name = req.body.name;
+        const usuario = req.body.usuario;
         const password = req.body.password;
         let passHaas = await bcryptjs.hash(password, 8);
         
-        if(email && name && passHaas){
-            connection.query(`INSERT INTO users SET ?`, {email:email, name:name, password:passHaas}, async(error, results)=>{
+        if(usuario && passHaas){
+            connection.query(`INSERT INTO tbl_administradores SET ?`, {Usuario:usuario, Contraseña:passHaas}, async(error, results)=>{
                 if(error){
                     console.log(error)
                 }else{
@@ -26,7 +23,7 @@ export const createAdmin = async (req, res)=>{
             res.json("Por favor ingrese todos los datos")
         }
     } catch (error) {
-        createError(404, '!Ups algo anda mal¡')
+        return res.status(500).json({ message: error.message})
     }
 }
 
@@ -34,14 +31,14 @@ export const createAdmin = async (req, res)=>{
 // VALIDAR EL IGRESO AL MODULO ADMINISTRADOR TRAMO
 export const autenticacionAdmin = async(req, res)=>{
     try {
-        const adminMail = req.body.mailAdmin;
+        const usuarioAdmin = req.body.usuarioAdmin;
         const adminContra = req.body.passwordAdmin;
 
         let passHaas = await bcryptjs.hash(adminContra, 8)
 
-        if(adminMail && adminContra){
-            connection.query(`SELECT * FROM users WHERE email=?`, [adminMail], async (error , results)=>{
-                if(results.length == 0 || !(await bcryptjs.compare(adminContra, results[0].password))){
+        if(usuarioAdmin && adminContra){
+            connection.query(`SELECT * FROM tbl_administradores WHERE Usuario=?`, [usuarioAdmin], async (error , results)=>{
+                if(results.length == 0 || !(await bcryptjs.compare(adminContra, results[0].Contraseña))){
                     res.json("USUARIO y/o CONTRASEÑA incorrecta");
                 }else{
                     req.session.loggedin = true;
@@ -54,7 +51,7 @@ export const autenticacionAdmin = async(req, res)=>{
             res.json(" ¡Por favor, llene los campos requeridos! ")
         }
     } catch (error) {
-        createError(404, '!Ups algo anda mal¡')
+        return res.status(500).json({ message: error.message})
     }
 }
 
@@ -65,7 +62,7 @@ export const controlerAdmin = (req, res)=> {
         if(req.session.loggedin){
             res.json({
                 "login": "true",
-                "npmbreAdmin": "req.session.name",
+                "nombreAdmin": "req.session.name",
                 "CorreoAdmin": "req.session.email"
             });
         }else{
@@ -74,7 +71,7 @@ export const controlerAdmin = (req, res)=> {
             })
         }
     } catch (error) {
-        createError(404, '!Ups algo anda mal¡')
+        return res.status(500).json({ message: error.message})
     }
 }
 
@@ -87,7 +84,7 @@ export const cerraSesion = (req, res)=> {
             })
         })
     } catch (error) {
-        createError(404, '!Ups algo anda mal¡')
+        return res.status(500).json({ message: error.message})
     }
 }
 

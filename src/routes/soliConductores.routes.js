@@ -1,9 +1,24 @@
 import { Router } from "express";
 
-import { soliGeneral } from "../controllers/soliConductores.controller.js"
+import { soliPendiente, rechazarSoli, aceptarSoliConductor, soliRechazada } from "../controllers/soliConductores.controller.js"
 
 const router = Router();
 
-router.get('/solicitudes', soliGeneral)
+//==========================================================
+// SOLICITUDES PENDIENTES
+//==========================================================
+
+router.get('/solicitudesPendiente', soliPendiente);
+
+router.put('rechazarSolicitud/:id', rechazarSoli);
+
+router.put('/aceptarSoli/:id', aceptarSoliConductor);
+
+//==========================================================
+// SOLICITUDES RECHAZADAS
+//==========================================================
+
+router.get('/solicitudesRechazadas', soliRechazada)
+
 
 export default router
